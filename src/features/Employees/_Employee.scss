@@ -1,0 +1,136 @@
+@import '../../styles/utility/index';
+
+.employee {
+  width: 1000px;
+  background-color: $silver;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 spacing(1);
+  }
+
+  &__compare {
+    display: flex;
+    flex-direction: column;
+    border-top: 3px solid white;
+
+    &__details {
+      padding: spacing(2) spacing(1);
+      display: flex;
+
+      div {
+        flex: 1 0 18%;
+        display: flex;
+        flex-direction: column;
+
+        span {
+          text-align: center;
+
+          border-bottom: 1px solid $light-grey;
+        }
+      }
+    }
+
+    &__title {
+      span {
+        text-align: left !important;
+        padding: spacing(1) spacing(3);
+      }
+    }
+
+    &__info {
+      span {
+        background-color: white;
+        padding: spacing(1);
+      }
+    }
+  }
+
+  &__card {
+    background-color: white;
+    flex: 1 0 15%;
+    margin: spacing(1);
+    padding: spacing(1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 192px;
+
+    position: relative;
+
+    &__overlay {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background-color: $cyan;
+      opacity: 0.4;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: default;
+    }
+
+    &__action {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50%;
+      border: 2px solid white;
+      color: white;
+      text-align: center;
+      font-weight: 500;
+
+      &.comparing {
+        background-color: white;
+        color: $cyan;
+        opacity: 1;
+      }
+    }
+
+    img {
+      width: 50%;
+      margin-bottom: spacing(2);
+    }
+
+    &__details {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+
+      & > span {
+        &:first-of-type {
+          display: flex;
+          flex-direction: column;
+        }
+
+        &:last-of-type {
+        }
+      }
+    }
+
+    &--name {
+      font-size: spacing(1.25);
+      font-weight: 500;
+    }
+
+    &--age {
+      font-size: spacing(1);
+      color: $grey;
+    }
+
+    &--salary {
+      color: blue;
+    }
+  }
+}

@@ -1,0 +1,38 @@
+@import '~normalize.css/normalize.css';
+@import 'styles/utility/index';
+
+$min_width: 320px;
+$max_width: 1200px;
+$min_font: 16px;
+$max_font: 24px;
+
+html {
+  font-size: 62.5%;
+  min-width: 900px;
+  // @include fluid-type($min_width, $max_width, $min_font, $max_font);
+}
+
+html,
+body {
+  min-height: 100vh;
+  height: 100%;
+  line-height: 1.375em;
+  background-color: $mainbg;
+  display: flex;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+#root {
+  height: 100%;
+}
+
+.row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.error {
+  color: red;
+}

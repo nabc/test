@@ -1,0 +1,4 @@
+@function spacing($quantity) {
+  $base: 0.8;
+  @return $quantity * $base * 1rem;
+}

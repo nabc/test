@@ -1,0 +1,562 @@
+//
+//  MEDIA QUERIES
+//––––––––––––––––––––––––––––––––––––––––––––––––––
+
+// A map of breakpoints.
+$breakpoints: (
+  xs: 576px,
+  sm: 768px,
+  md: 992px,
+  lg: 1200px,
+);
+
+// @include respond-above(sm) {}
+@mixin respond-above($breakpoint) {
+  // If the breakpoint exists in the map.
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Get the breakpoint value.
+    $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+    // Write the media query.
+    @media (min-width: $breakpoint-value) {
+      @content;
+    }
+
+    // If the breakpoint doesn't exist in the map.
+  } @else {
+    // Log a warning.
+    @warn 'Invalid breakpoint: #{$breakpoint}.';
+  }
+}
+
+// @include respond-below(sm) {}
+@mixin respond-below($breakpoint) {
+  // If the breakpoint exists in the map.
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Get the breakpoint value.
+    $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+    // Write the media query.
+    @media (max-width: ($breakpoint-value - 1)) {
+      @content;
+    }
+
+    // If the breakpoint doesn't exist in the map.
+  } @else {
+    // Log a warning.
+    @warn 'Invalid breakpoint: #{$breakpoint}.';
+  }
+}
+
+// @include respond-between(sm, md) {}
+@mixin respond-between($lower, $upper) {
+  // If both the lower and upper breakpoints exist in the map.
+  @if map-has-key($breakpoints, $lower) and map-has-key($breakpoints, $upper) {
+    // Get the lower and upper breakpoints.
+    $lower-breakpoint: map-get($breakpoints, $lower);
+    $upper-breakpoint: map-get($breakpoints, $upper);
+
+    // Write the media query.
+    @media (min-width: $lower-breakpoint) and (max-width: ($upper-breakpoint - 1)) {
+      @content;
+    }
+
+    // If one or both of the breakpoints don't exist.
+  } @else {
+    // If lower breakpoint is invalid.
+    @if (map-has-key($breakpoints, $lower) == false) {
+      // Log a warning.
+      @warn 'Your lower breakpoint was invalid: #{$lower}.';
+    }
+
+    // If upper breakpoint is invalid.
+    @if (map-has-key($breakpoints, $upper) == false) {
+      // Log a warning.
+      @warn 'Your upper breakpoint was invalid: #{$upper}.';
+    }
+  }
+}
+
+@mixin mobile() {
+  @include respond-below(sm) {
+    @content;
+  }
+}
+
+@mixin tablet() {
+  @include respond-between(sm, md) {
+    @content;
+  }
+}
+
+@mixin desktop() {
+  @include respond-above(md) {
+    @content;
+  }
+}
+
+@function strip-unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+@mixin fluid-type($min-vw, $max-vw, $min-font-size, $max-font-size) {
+  $u1: unit($min-vw);
+  $u2: unit($max-vw);
+  $u3: unit($min-font-size);
+  $u4: unit($max-font-size);
+
+  @if $u1 == $u2 and $u1 == $u3 and $u1 == $u4 {
+    & {
+      font-size: $min-font-size;
+      @media screen and (min-width: $min-vw) {
+        font-size: calc(
+          #{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} *
+            ((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)})
+        );
+      }
+      @media screen and (min-width: $max-vw) {
+        font-size: $max-font-size;
+      }
+    }
+  }
+}
+
+@mixin card() {
+  border-radius: 1rem;
+  box-shadow: 0 6px 10px 0 rgba(171, 201, 219, 0.5);
+  background-color: $white;
+}
+
+@mixin arrow-up($color, $size) {
+  width: 0;
+  height: 0;
+  border-left: $size solid transparent;
+  border-right: $size solid transparent;
+
+  border-bottom: $size solid $color;
+}
+
+@mixin arrow-down($color, $size) {
+  width: 0;
+  height: 0;
+
+  align-self: center;
+  border: solid $color;
+  border-width: $size 0 0 $size;
+  display: inline-block;
+  padding: $size * 2;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+@mixin arrow-right($color, $size) {
+  width: 0;
+  height: 0;
+  border-top: $size solid transparent;
+  border-bottom: $size solid transparent;
+
+  border-left: $size solid $color;
+}
+
+@mixin arrow-left($color, $size) {
+  width: 0;
+  height: 0;
+  border-top: $size solid transparent;
+  border-bottom: $size solid transparent;
+
+  border-right: $size solid $color;
+}
+
+@mixin tree($size, $style, $color, $dir) {
+  ul {
+    position: relative;
+    list-style: none;
+    @if $dir == ltr {
+      padding-left: 1rem;
+    } @else {
+      padding-right: 1rem;
+    }
+  }
+
+  ul > li:last-child::after {
+    height: 0.5rem;
+  }
+
+  li {
+    position: relative;
+
+    &:not(:first-of-type):before {
+      content: '';
+      position: absolute;
+      border-top: $size $style $color;
+      top: 1.4rem;
+      width: 1.125rem;
+      height: 0;
+      @if $dir == ltr {
+        left: -0.75rem;
+        right: auto;
+      } @else {
+        right: -0.75rem;
+      }
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      border-right: $size $style $color;
+      height: 100%;
+      width: 0;
+      top: 0.75rem;
+      @if $dir == ltr {
+        left: -0.75rem;
+        right: auto;
+      } @else {
+        right: -0.75rem;
+      }
+    }
+  }
+}
+
+@mixin center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@mixin unstyled-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+// --------------------------------------------------
+// Flexbox SASS mixins
+// The spec: http://www.w3.org/TR/css3-flexbox
+// --------------------------------------------------
+
+// Flexbox display
+@mixin flex-box() {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+// The 'flex' shorthand
+// - applies to: flex items
+// <positive-number>, initial, auto, or none
+@mixin flex($values) {
+  -webkit-box-flex: $values;
+  -moz-box-flex: $values;
+  -webkit-flex: $values;
+  -ms-flex: $values;
+  flex: $values;
+}
+
+// Flex Flow Direction
+// - applies to: flex containers
+// row | row-reverse | column | column-reverse
+@mixin flex-direction($direction) {
+  -webkit-flex-direction: $direction;
+  -moz-flex-direction: $direction;
+  -ms-flex-direction: $direction;
+  flex-direction: $direction;
+}
+
+// Flex Line Wrapping
+// - applies to: flex containers
+// nowrap | wrap | wrap-reverse
+@mixin flex-wrap($wrap) {
+  -webkit-flex-wrap: $wrap;
+  -moz-flex-wrap: $wrap;
+  -ms-flex-wrap: $wrap;
+  flex-wrap: $wrap;
+}
+
+// Flex Direction and Wrap
+// - applies to: flex containers
+// <flex-direction> || <flex-wrap>
+@mixin flex-flow($flow) {
+  -webkit-flex-flow: $flow;
+  -moz-flex-flow: $flow;
+  -ms-flex-flow: $flow;
+  flex-flow: $flow;
+}
+
+// Display Order
+// - applies to: flex items
+// <integer>
+@mixin order($val) {
+  -webkit-box-ordinal-group: $val;
+  -moz-box-ordinal-group: $val;
+  -ms-flex-order: $val;
+  -webkit-order: $val;
+  order: $val;
+}
+
+// Flex grow factor
+// - applies to: flex items
+// <number>
+@mixin flex-grow($grow) {
+  -webkit-flex-grow: $grow;
+  -moz-flex-grow: $grow;
+  -ms-flex-grow: $grow;
+  flex-grow: $grow;
+}
+
+// Flex shrink
+// - applies to: flex item shrink factor
+// <number>
+@mixin flex-shrink($shrink) {
+  -webkit-flex-shrink: $shrink;
+  -moz-flex-shrink: $shrink;
+  -ms-flex-shrink: $shrink;
+  flex-shrink: $shrink;
+}
+
+// Flex basis
+// - the initial main size of the flex item
+// - applies to: flex itemsnitial main size of the flex item
+// <width>
+@mixin flex-basis($width) {
+  -webkit-flex-basis: $width;
+  -moz-flex-basis: $width;
+  -ms-flex-basis: $width;
+  flex-basis: $width;
+}
+
+// Axis Alignment
+// - applies to: flex containers
+// flex-start | flex-end | center | space-between | space-around
+@mixin justify-content($justify) {
+  -webkit-justify-content: $justify;
+  -moz-justify-content: $justify;
+  -ms-justify-content: $justify;
+  justify-content: $justify;
+  -ms-flex-pack: $justify;
+}
+
+// Packing Flex Lines
+// - applies to: multi-line flex containers
+// flex-start | flex-end | center | space-between | space-around | stretch
+@mixin align-content($align) {
+  -webkit-align-content: $align;
+  -moz-align-content: $align;
+  -ms-align-content: $align;
+  align-content: $align;
+}
+
+// Cross-axis Alignment
+// - applies to: flex containers
+// flex-start | flex-end | center | baseline | stretch
+@mixin align-items($align) {
+  -webkit-align-items: $align;
+  -moz-align-items: $align;
+  -ms-align-items: $align;
+  align-items: $align;
+}
+
+// Cross-axis Alignment
+// - applies to: flex items
+// auto | flex-start | flex-end | center | baseline | stretch
+@mixin align-self($align) {
+  -webkit-align-self: $align;
+  -moz-align-self: $align;
+  -ms-align-self: $align;
+  align-self: $align;
+}
+
+/*
+ * CSS Transform - Scale and Rotate
+ */
+@mixin scale-rotate($scale, $rotate) {
+  -webkit-transform: scale($scale) rotate($rotate);
+  -ms-transform: scale($scale) rotate($rotate);
+  -o-transform: scale($scale) rotate($rotate);
+  transform: scale($scale) rotate($rotate);
+}
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+  border-radius: $radius;
+  background-clip: padding-box; /* stops bg color from leaking outside the border: */
+}
+// Single side border-radius
+@mixin border-top-radius($radius) {
+  -webkit-border-top-right-radius: $radius;
+  border-top-right-radius: $radius;
+  -webkit-border-top-left-radius: $radius;
+  border-top-left-radius: $radius;
+  background-clip: padding-box;
+}
+@mixin border-right-radius($radius) {
+  -webkit-border-bottom-right-radius: $radius;
+  border-bottom-right-radius: $radius;
+  -webkit-border-top-right-radius: $radius;
+  border-top-right-radius: $radius;
+  background-clip: padding-box;
+}
+@mixin border-bottom-radius($radius) {
+  -webkit-border-bottom-right-radius: $radius;
+  border-bottom-right-radius: $radius;
+  -webkit-border-bottom-left-radius: $radius;
+  border-bottom-left-radius: $radius;
+  background-clip: padding-box;
+}
+@mixin border-left-radius($radius) {
+  -webkit-border-bottom-left-radius: $radius;
+  border-bottom-left-radius: $radius;
+  -webkit-border-top-left-radius: $radius;
+  border-top-left-radius: $radius;
+  background-clip: padding-box;
+}
+//--------------------------------------------
+// Usage
+//--------------------------------------------
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  $opacity-ie: $opacity * 100;
+  filter: alpha(opacity=$opacity-ie); //IE8
+}
+
+//--------------------------------------------
+// Usage
+//--------------------------------------------
+@mixin clearfix() {
+  &:before,
+  &:after {
+    content: '';
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+//--------------------------------------------
+// Usage
+//--------------------------------------------
+// *,
+// *:after,
+// *:before {
+//   @include box-sizing(border-box);
+// }
+@mixin box-sizing($box-model) {
+  -webkit-box-sizing: $box-model; // Safari <= 5
+  -moz-box-sizing: $box-model; // Firefox <= 19
+  box-sizing: $box-model;
+}
+
+@mixin user-select($select) {
+  -webkit-touch-callout: $select; /* iOS Safari */
+  -webkit-user-select: $select; /* Safari */
+  -khtml-user-select: $select; /* Konqueror HTML */
+  -moz-user-select: $select; /* Firefox */
+  -ms-user-select: $select; /* Internet Explorer/Edge */
+  user-select: $select; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+@mixin button-variant($color, $background, $border) {
+  color: $color;
+  background-color: $background;
+  border: 1px solid $border;
+
+  &:focus,
+  &.focus {
+    color: $color;
+    background-color: darken($background, 5%);
+    border-color: darken($border, 12%);
+  }
+  &:hover {
+    color: $color;
+    background-color: darken($background, 5%);
+    border-color: darken($border, 6%);
+  }
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    color: $color;
+    background-color: darken($background, 5%);
+    background-image: none;
+    border-color: darken($border, 6%);
+
+    &:hover,
+    &:focus,
+    &.focus {
+      color: $color;
+      background-color: darken($background, 9%);
+      border-color: darken($border, 12%);
+    }
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus,
+    &.focus {
+      background-color: $background;
+      border-color: $border;
+    }
+  }
+
+  .badge {
+    color: $background;
+    background-color: $color;
+  }
+}
+
+// Button sizes
+@mixin button-size($padding-vertical, $padding-horizontal, $font-size, $line-height, $border-radius) {
+  padding: $padding-vertical $padding-horizontal;
+  font-size: $font-size;
+  line-height: $line-height;
+  border-radius: $border-radius;
+}
+
+@mixin topaz-btn() {
+  cursor: pointer;
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  @include user-select(none);
+  @include button-variant($white, $orange, $orange);
+}
+
+@mixin dusty-orange-btn() {
+  cursor: pointer;
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  @include user-select(none);
+  @include button-variant($white, $orange, $orange);
+}
+@mixin dusty-orange-btn-revert() {
+  cursor: pointer;
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  @include user-select(none);
+  @include button-variant($orange, $white, $orange);
+}
+
+@mixin trolley-grey-btn() {
+  cursor: pointer;
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  @include user-select(none);
+  @include button-variant($white, $trolley-grey, $trolley-grey);
+}
+
+@mixin default-btn() {
+  cursor: pointer;
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  @include user-select(none);
+  @include button-variant($trolley-grey, $white, $trolley-grey);
+}
+
+@mixin faded-red-btn() {
+  cursor: pointer;
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  @include user-select(none);
+  @include button-variant($white, $faded-red, $faded-red);
+}
